@@ -475,14 +475,14 @@ if page == "Wetterdaten":
         wind_list = st.session_state.wind_list
 
         # Diagramme anzeigen
-        chart_type3 = st.selectbox("Wählen Sie eine Rubrik:",
+        chart_type5 = st.selectbox("Wählen Sie eine Rubrik:",
                                 ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"])
 
-        if chart_type3 == "Temperatur in Celsius":
+        if chart_type5 == "Temperatur in Celsius":
             st.line_chart(pd.DataFrame({"Datum": date_list, "Temperatur": temp_list}).set_index("Datum"))
-        elif chart_type3 == "Luftfeuchtigkeit in %":
+        elif chart_type5 == "Luftfeuchtigkeit in %":
             st.bar_chart(pd.DataFrame({"Datum": date_list, "Luftfeuchtigkeit": humidity_list}).set_index("Datum"))
-        elif chart_type3 == "Windgeschwindigkeit in m/s":
+        elif chart_type5 == "Windgeschwindigkeit in m/s":
             st.area_chart(pd.DataFrame({"Datum": date_list, "Windgeschwindigkeit": wind_list}).set_index("Datum"))
 
     st.divider()
