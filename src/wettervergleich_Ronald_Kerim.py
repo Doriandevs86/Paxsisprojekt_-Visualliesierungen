@@ -5,7 +5,7 @@ from datetime import datetime
 import matplotlib as plt
 
 # Api_key
-api_key = "3986444df517b61fd9c0b7ec2ea4561c"
+api_key = "Dein API Key"
 
 
 #Funktion für 16 Tage-Vorhersagen

@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 # Api_key
-api_key = "3986444df517b61fd9c0b7ec2ea4561c"
+api_key = "Dein Api Key"
 
 
 

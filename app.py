@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 # Api_key
-api_key = "3986444df517b61fd9c0b7ec2ea4561c"
+api_key = "Dein API Key"
 
 
 # Funktion, um aktuelle Wetterdaten abzurufen
@@ -465,6 +465,7 @@ if page == "Wetterdaten":
                 else:
                     st.error("Es konnten keine Daten abgerufen werden.")
                 st.dataframe(forecast_16d_df)
+
 
     # Überprüfen, ob die Daten bereits im session_state gespeichert sind
     if 'forecast_16d_df' in st.session_state:
