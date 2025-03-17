@@ -77,7 +77,7 @@ def fetch_16d_forecast(city):
 #         'dt': timestamp,
 #         'appid': api_key
 #     }
-# 
+#
 #     response = requests.get(url, params=params)
 #     data = response.json()
 #
@@ -715,17 +715,14 @@ if page == "Wettervergleich":
 # Städtevergleichsseite
 if page == "Städtevergleich":
     st.sidebar.title('Welchen Zeitraum möchten Sie vergleichen?')
-    st.sidebar.markdown("")
     page = st.sidebar.radio(" ",
                             ['4 Tages-Vergleich',
                              '16 Tages-Vergleich',
-                             '30 Tages Klima-Vergleich']
+                             '30 Tages-Vergleich']
                             )
     # 4 Tages-Vergleich
     if page == '4 Tages-Vergleich':
-
-        st.title('4 Tagesvergleich von 2 Städten')
-
+        st.title('Welche beiden Städte möchtest du vergleichen?')
         city1 = st.text_input('Gib eine Stadt ein:', 'Berlin')
         city2 = st.text_input('Gib hier deine zweite Stadt ein:', 'Stuttgart')
 
@@ -763,13 +760,14 @@ if page == "Städtevergleich":
 
             plt.style.use("dark_background")
 
+            st.write("Wähle eine Rubrik")
+            # Tabs auf dem Plot
             tab1, tab2, tab3 = st.tabs(['Temperatur',
                                         'Windgeschwindigkeit',
                                         'Luftfeuchtigkeit'])
 
             with tab1:
                 st.header('Temperatur')
-
                 fig, ax = plt.subplots()
                 ax.plot(df1['Datum'], df1['Temperatur (°C)'], color='b')
                 ax.plot(df2['Datum'], df2['Temperatur (°C)'], color='c')
@@ -777,15 +775,10 @@ if page == "Städtevergleich":
                 plt.xlabel('Datum')
                 plt.ylabel('Temperatur (°C)')
                 ax.legend(labels=[city1, city])
-
-                #        lum_img = img[:, :, 0]
-                #        plt.imshow(lum_img)
-
                 st.pyplot(fig)
 
             with tab2:
                 st.header('Windgeschwindigkeit')
-
                 fig, ax = plt.subplots()
                 ax.plot(df1['Datum'], df1['Windgeschwindigkeit (m/s)'], color='b')
                 ax.plot(df2['Datum'], df2['Windgeschwindigkeit (m/s)'], color='c')
@@ -793,15 +786,10 @@ if page == "Städtevergleich":
                 plt.xlabel('Datum')
                 plt.ylabel('Windgeschwindigkeit (m/s)')
                 ax.legend(labels=[city1, city])
-
-                #        lum_img = img[:, :, 0]
-                #        plt.imshow(lum_img)
-
                 st.pyplot(fig)
 
             with tab3:
                 st.header('Luftfeuchtigkeit')
-
                 fig, ax = plt.subplots()
                 ax.plot(df1['Datum'], df1['Luftfeuchtigkeit (%)'], color='b')
                 ax.plot(df2['Datum'], df2['Luftfeuchtigkeit (%)'], color='c')
@@ -809,13 +797,136 @@ if page == "Städtevergleich":
                 plt.xlabel('Datum')
                 plt.ylabel('Luftfeuchtigkeit (%)')
                 ax.legend(labels=[city1, city])
-
-                #        lum_img = img[:, :, 0]
-                #        plt.imshow(lum_img)
-
                 st.pyplot(fig)
 
-# Streamlit-App
+    if page == '16 Tages-Vergleich':
+        st.title('Welche beiden Städte möchtest du vergleichen?')
+        city1 = st.text_input('Gib eine Stadt ein:', 'Berlin')
+        city2 = st.text_input('Gib hier deine zweite Stadt ein:', 'Stuttgart')
+
+        if st.button('Wetterdaten abrufen'):
+            data1 = fetch_16d_forecast(city1)
+            data2 = fetch_16d_forecast(city2)
+
+            # Stadt 1 Daten extrahieren
+            if data1:
+                forecast_list1 = data1['list']
+                city1_name = data1['city']['name']
+
+                # Listen zur Speicherung der Wetterdaten
+                date_list1 = []
+                temp_list1 = []
+                humidity_list1 = []
+                wind_list1 = []
+                description_list1 = []
+
+                for day in forecast_list1:
+                    date = pd.to_datetime(day['dt'], unit='s').strftime('%Y-%m-%d')
+                    temp = day['temp']['day']
+                    humidity = day['humidity']
+                    description = day['weather'][0]['description']
+                    wind_speed = day['speed']
+
+                    date_list1.append(date)
+                    temp_list1.append(temp)
+                    humidity_list1.append(humidity)
+                    wind_list1.append(wind_speed)
+                    description_list1.append(description)
+
+                df1 = pd.DataFrame({
+                    'Stadt': city1_name,
+                    'Datum': date_list1,
+                    'Temperatur (°C)': temp_list1,
+                    'Luftfeuchtigkeit (%)': humidity_list1,
+                    'Windgeschwindigkeit (m/s)': wind_list1,
+                    'Beschreibung': description_list1
+                })
+
+            # Stadt 2 Daten extrahieren
+            if data2:
+                forecast_list2 = data2['list']
+                city2_name = data2['city']['name']
+
+                # Listen zur Speicherung der Wetterdaten
+                date_list2 = []
+                temp_list2 = []
+                humidity_list2 = []
+                wind_list2 = []
+                description_list2 = []
+
+                for day in forecast_list2:
+                    date = pd.to_datetime(day['dt'], unit='s').strftime('%Y-%m-%d')
+                    temp = day['temp']['day']
+                    humidity = day['humidity']
+                    description = day['weather'][0]['description']
+                    wind_speed = day['speed']
+
+                    date_list2.append(date)
+                    temp_list2.append(temp)
+                    humidity_list2.append(humidity)
+                    wind_list2.append(wind_speed)
+                    description_list2.append(description)
+
+                df2 = pd.DataFrame({
+                    'Stadt': city2_name,
+                    'Datum': date_list2,
+                    'Temperatur (°C)': temp_list2,
+                    'Luftfeuchtigkeit (%)': humidity_list2,
+                    'Windgeschwindigkeit (m/s)': wind_list2,
+                    'Beschreibung': description_list2
+                })
+
+            st.write("Wähle eine Rubrik")
+            # Visualisierung
+            plt.style.use("dark_background")
+
+            # Tabs auf dem Plot
+            tab1, tab2, tab3 = st.tabs(['Temperatur', 'Windgeschwindigkeit', 'Luftfeuchtigkeit'])
+
+            with tab1:
+                st.header('Temperatur')
+                fig, ax = plt.subplots()
+                ax.plot(df1['Datum'], df1['Temperatur (°C)'], color='b', label=city1_name)
+                ax.plot(df2['Datum'], df2['Temperatur (°C)'], color='c', label=city2_name)
+                ax.set_xticks(df1['Datum'][::2])
+                plt.xticks(rotation=45)
+                plt.xlabel('Datum')
+                plt.ylabel('Temperatur (°C)')
+                ax.legend()
+                st.pyplot(fig)
+
+            with tab2:
+                st.header('Windgeschwindigkeit')
+                fig, ax = plt.subplots()
+                ax.plot(df1['Datum'], df1['Windgeschwindigkeit (m/s)'], color='b', label=city1_name)
+                ax.plot(df2['Datum'], df2['Windgeschwindigkeit (m/s)'], color='c', label=city2_name)
+                ax.set_xticks(df1['Datum'][::2])
+                plt.xticks(rotation=45)
+                plt.xlabel('Datum')
+                plt.ylabel('Windgeschwindigkeit (m/s)')
+                ax.legend()
+                st.pyplot(fig)
+
+            with tab3:
+                st.header('Luftfeuchtigkeit')
+
+                fig, ax = plt.subplots()
+                ax.plot(df1['Datum'], df1['Luftfeuchtigkeit (%)'], color='b', label=city1_name)
+                ax.plot(df2['Datum'], df2['Luftfeuchtigkeit (%)'], color='c', label=city2_name)
+                ax.set_xticks(df1['Datum'][::2])
+                plt.xticks(rotation=45)
+                plt.xlabel('Datum')
+                plt.ylabel('Luftfeuchtigkeit (%)')
+                ax.legend()
+                st.pyplot(fig)
+
+
+    if page == '30 Tages-Vergleich':
+        st.title('---Work in progress---')
+        st.write("## Coming soon")
+
+
+# Wetterkarte
 if page == "Globale Wetterkarte (coming soon)":
     st.title('Interaktive Wetterkarte')
     st.write("## -----------   WORK IN PROGRESS  ----------")
@@ -826,7 +937,6 @@ if page == "Globale Wetterkarte (coming soon)":
     # if st.button("Wetter anzeigen"):
     #        # Karte erstellen
     #        m = folium.Map(location=[lat, lon], zoom_start=10)
-    #
     #        folium.Marker(
     #            [lat, lon],
     #            popup=popup_text,
@@ -837,8 +947,6 @@ if page == "Globale Wetterkarte (coming soon)":
     #        # Karte in Streamlit anzeigen
     #        st_folium(m, width=700, height=500)
     #         -----------   WORK IN PROGRESS  -----------
-
-
 
 
 ### Kontakt Seite ###
