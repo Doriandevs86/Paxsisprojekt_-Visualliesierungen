@@ -446,6 +446,7 @@ if page == "Wetterdaten":
                 ax.set_title("Temperatur über die nächsten Tage")
                 ax.set_xlabel("Datum")
                 ax.set_ylabel("Temperatur (°C)")
+                ax.set_xticks(date_list[::2])
                 plt.xticks(rotation=45)
                 st.pyplot(fig)
 
@@ -456,6 +457,7 @@ if page == "Wetterdaten":
                 ax.set_title("Luftfeuchtigkeit über die nächsten Tage")
                 ax.set_xlabel("Datum")
                 ax.set_ylabel("Luftfeuchtigkeit (%)")
+                ax.set_xticks(date_list[::2])
                 plt.xticks(rotation=45)
                 st.pyplot(fig)
 
@@ -466,110 +468,107 @@ if page == "Wetterdaten":
                 ax.set_title("Windgeschwindigkeit über die nächsten Tage")
                 ax.set_xlabel("Datum")
                 ax.set_ylabel("Windgeschwindigkeit (m/s)")
+                ax.set_xticks(date_list[::2])
                 plt.xticks(rotation=45)
                 st.pyplot(fig)
 
-        # st.dataframe(forecast_16d_df)
+                    # st.dataframe(forecast_16d_df)
 
 
     # Benutzerdefinierter Zeitraum
     elif weather_type == "Benutzerdefinierter Zeitraum" and city:
         st.write("### Wettervorhersage für deinen Zeitraum")
 
-        # Kalenderfunktion: Datumseingabe für Start- und Enddatum
         start_date = st.date_input("Startdatum", value=pd.to_datetime("today").date())
         end_date = st.date_input("Enddatum", value=pd.to_datetime("today").date())
 
-        # Button zum Starten
+        # Button zum Abrufen der Daten
         if st.button("Daten abrufen"):
             if start_date > end_date:
                 st.error("Das Startdatum darf nicht nach dem Enddatum liegen.")
             else:
-                dates = pd.date_range(start=start_date, end=end_date).date.tolist()
-
                 forecast_16d_data = fetch_16d_forecast(city)
                 if forecast_16d_data:
-                    #st.write(f"Wettervorhersage für die nächsten 16 Tage in {city}:")
-
-                    forecast_16d_df = pd.DataFrame(
-                        columns=["Datum", "Temperatur", "Luftfeuchtigkeit", "Beschreibung", "Windgeschwindigkeit"]
-                    )
-
-                    temp_list, humidity_list, wind_list, description_list, date_list = [], [], [], [], []
+                    # Listen zum Speichern der Wetterdaten
+                    date_list, temp_list, humidity_list, wind_list, description_list = [], [], [], [], []
 
                     for day in forecast_16d_data['list']:
-                        # Konvertiert das Datum der API zu einem pandas Timestamp und dann zu einem datetime.date
                         date = pd.to_datetime(day['dt'], unit='s').date()
-
-                        # Vergleiche die Datumseinträge
                         if start_date <= date <= end_date:
                             temp = day['temp']['day']
                             humidity = day['humidity']
                             description = day['weather'][0]['description']
                             wind_speed = day['speed']
 
-                            # Datum und Wetterdaten speichern
                             date_list.append(date)
                             temp_list.append(temp)
                             humidity_list.append(humidity)
                             wind_list.append(wind_speed)
                             description_list.append(description)
 
-                            new_row = pd.DataFrame({
-                                "Datum": [date],
-                                "Temperatur": [f"{temp}°C"],
-                                "Luftfeuchtigkeit": [f"{humidity}%"],
-                                "Beschreibung": [description],
-                                "Windgeschwindigkeit": [f"{wind_speed} m/s"]
-                            })
+                    # Speichern der Wetterdaten im Session State
+                    st.session_state["forecast_16d_df"] = pd.DataFrame({
+                        "Datum": date_list,
+                        "Temperatur": [f"{t}°C" for t in temp_list],
+                        "Luftfeuchtigkeit": [f"{h}%" for h in humidity_list],
+                        "Beschreibung": description_list,
+                        "Windgeschwindigkeit": [f"{w} m/s" for w in wind_list]
+                    })
 
-                            forecast_16d_df = pd.concat([forecast_16d_df, new_row], ignore_index=True)
-
-                    # Speichere die Daten in session_state, damit sie nach der Aktualisierung erhalten bleiben
-                    st.session_state.forecast_16d_df = forecast_16d_df
-                    st.session_state.date_list = date_list
-                    st.session_state.temp_list = temp_list
-                    st.session_state.humidity_list = humidity_list
-                    st.session_state.wind_list = wind_list
-
-                    st.markdown("<h4>Wählen Sie eine Rubrik:</h4>", unsafe_allow_html=True)
-
-                    chart_type8 = st.selectbox(
-                        "",
-                        ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"]
-                    )
-                    # Temperatur-Diagramm
-                    if chart_type8 == "Temperatur in Celsius":
-                        fig, ax = plt.subplots()
-                        ax.plot(date_list, temp_list, marker='o', color='tab:red')
-                        ax.set_title("Temperatur über die nächsten Tage")
-                        ax.set_xlabel("Datum")
-                        ax.set_ylabel("Temperatur (°C)")
-                        plt.xticks(rotation=45)
-                        st.pyplot(fig)
-
-                    # Luftfeuchtigkeit-Diagramm
-                    elif chart_type8 == "Luftfeuchtigkeit in %":
-                        fig, ax = plt.subplots()
-                        ax.bar(date_list, humidity_list, color='tab:cyan')
-                        ax.set_title("Luftfeuchtigkeit über die nächsten Tage")
-                        ax.set_xlabel("Datum")
-                        ax.set_ylabel("Luftfeuchtigkeit (%)")
-                        plt.xticks(rotation=45)
-                        st.pyplot(fig)
-
-                    # Windgeschwindigkeit-Diagramm
-                    elif chart_type8 == "Windgeschwindigkeit in m/s":
-                        fig, ax = plt.subplots()
-                        ax.fill_between(date_list, wind_list, color='tab:green', alpha=0.5)
-                        ax.set_title("Windgeschwindigkeit über die nächsten Tage")
-                        ax.set_xlabel("Datum")
-                        ax.set_ylabel("Windgeschwindigkeit (m/s)")
-                        plt.xticks(rotation=45)
-                        st.pyplot(fig)
+                    st.session_state["date_list"] = date_list
+                    st.session_state["temp_list"] = temp_list
+                    st.session_state["humidity_list"] = humidity_list
+                    st.session_state["wind_list"] = wind_list
 
                 else:
                     st.error("Es konnten keine Daten abgerufen werden.")
+
+        # Prüfe, ob Wetterdaten im Session State existieren
+        if "forecast_16d_df" in st.session_state:
+            st.write("### Wetterdaten")
+            st.dataframe(st.session_state["forecast_16d_df"])
+
+            # Diagrammoptionen
+            st.markdown("<h4>Wählen Sie eine Rubrik:</h4>", unsafe_allow_html=True)
+            chart_type8 = st.selectbox("",
+                                       ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"])
+
+            # Daten abrufen aus dem Session State
+            date_list = st.session_state["date_list"]
+            temp_list = st.session_state["temp_list"]
+            humidity_list = st.session_state["humidity_list"]
+            wind_list = st.session_state["wind_list"]
+
+            # Temperatur-Diagramm
+            if chart_type8 == "Temperatur in Celsius":
+                fig, ax = plt.subplots()
+                ax.plot(date_list, temp_list, marker='o', color='tab:red')
+                ax.set_title("Temperatur über die nächsten Tage")
+                ax.set_xlabel("Datum")
+                ax.set_ylabel("Temperatur (°C)")
+                plt.xticks(rotation=45)
+                st.pyplot(fig)
+
+            # Luftfeuchtigkeit-Diagramm
+            elif chart_type8 == "Luftfeuchtigkeit in %":
+                fig, ax = plt.subplots()
+                ax.bar(date_list, humidity_list, color='tab:cyan')
+                ax.set_title("Luftfeuchtigkeit über die nächsten Tage")
+                ax.set_xlabel("Datum")
+                ax.set_ylabel("Luftfeuchtigkeit (%)")
+                plt.xticks(rotation=45)
+                st.pyplot(fig)
+
+            # Windgeschwindigkeit-Diagramm
+            elif chart_type8 == "Windgeschwindigkeit in m/s":
+                fig, ax = plt.subplots()
+                ax.fill_between(date_list, wind_list, color='tab:green', alpha=0.5)
+                ax.set_title("Windgeschwindigkeit über die nächsten Tage")
+                ax.set_xlabel("Datum")
+                ax.set_ylabel("Windgeschwindigkeit (m/s)")
+                plt.xticks(rotation=45)
+                st.pyplot(fig)
+
                 # st.dataframe(forecast_16d_df)
 
 
