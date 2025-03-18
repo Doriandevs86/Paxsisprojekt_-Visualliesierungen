@@ -175,9 +175,13 @@ if page == "Startseite":
         einsehen. Zudem bieten wir eine "Wetter-App", mit der Sie Wetterprognosen für verschiedene Zeiträume anzeigen 
         lassen können.
 
-        - **Auswertungen**: In diesem Bereich haben Sie die Möglichkeit, verschiedene Wetterdaten miteinander zu vergleichen.
-        Beispielsweise können Sie Städte oder Regionen anhand von historischen und aktuellen Daten miteinander vergleichen,
-        um interessante Trends und Veränderungen zu erkennen.
+        - **Wettervergleich**: In diesem Bereich haben Sie die Möglichkeit, Wetter verschiedener Zeiträume mit einander
+        zu vergleichen. So können sie sich zum Beispiel historische Daten aus der Vergangenheit anzeigen lassen um daraus
+        eine Prognose für die Zukunft ableiten zu können.
+
+        - **Städtevergleich**: Hier können Sie Wetterdaten verschiedener Städte über einen frei wählbaren
+         Zeitraum miteinander vergleichen. Dieser Bereich soll es Ihnen ermöglichen, klimatische Unterschiede zwischen 
+         verschiedenen Orten und Regionen besser zu verstehen.
 
         - **Globale Wetterkarte**: Auf der interaktiven globalen Wetterkarte können Sie die aktuelle Temperatur weltweit
         auf einem anschaulichen Globus visualisieren. Diese Karte bietet eine beeindruckende Möglichkeit, das 
@@ -366,6 +370,8 @@ if page == "Wetterdaten":
                 ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"]
             )
 
+
+            plt.style.use("dark_background")
             # Diagramme
             if chart_type1 == "Temperatur in Celsius":
                 fig, ax = plt.subplots()
@@ -620,18 +626,19 @@ if page == "Wetterdaten":
 
 # Wettervergleichsseite
 if page == "Wettervergleich":
-    city = st.text_input("Stadt eingeben", "Berlin")
-
-    start_date = st.date_input("Startdatum", value=pd.to_datetime("today").date())
-    end_date = st.date_input("Enddatum", value=pd.to_datetime("today").date())
+    st.markdown('#### Gib eine Stadt ein')
+    city = st.text_input("", "Berlin")
+    st.markdown('### Gib ein Start und Enddatum ein')
+    start_date = st.date_input("Start", value=pd.to_datetime("today").date())
+    end_date = st.date_input("Ende", value=pd.to_datetime("today").date())
 
     # Daten nur einmal abrufen und speichern
-    if st.button("Daten vergleichen"):
-        forecast_data = fetch_16d_forecast(city)
-        if forecast_data:
-            st.session_state['forecast_data'] = forecast_data
-        else:
-            st.error("Keine Daten zum Vergleichen verfügbar.")
+#    if st.button("Daten vergleichen"):
+#        forecast_data = fetch_16d_forecast(city)
+#        if forecast_data:
+#            st.session_state['forecast_data'] = forecast_data
+#        else:
+#            st.error("Keine Daten zum Vergleichen verfügbar.")
 
     if 'forecast_data' in st.session_state:
         forecast_data = st.session_state['forecast_data']
@@ -690,7 +697,8 @@ if page == "Wettervergleich":
             })
 
             st.divider()
-            st.write(f"### Vergleichsdiagramm des Wetters in {city} \n zwischen {start_date} und {end_date}")
+            st.markdown(f"### Vergleichsdiagramm des Wetters in {city} <br> zwischen {start_date} und {end_date}",
+                        unsafe_allow_html=True)
             st.dataframe(vergleichs_df)
 
             # Vergleichs-Diagramm
@@ -722,8 +730,12 @@ if page == "Städtevergleich":
     # 4 Tages-Vergleich
     if page == '4 Tages-Vergleich':
         st.title('Welche beiden Städte möchtest du vergleichen?')
-        city1 = st.text_input('Gib eine Stadt ein:', 'Berlin')
-        city2 = st.text_input('Gib hier deine zweite Stadt ein:', 'Stuttgart')
+
+        st.markdown("### Gib eine Stadt ein:")
+        city1 = st.text_input("", "Berlin")
+
+        st.markdown("### Gib hier deine zweite Stadt ein:")
+        city2 = st.text_input("", "Stuttgart")
 
         if st.button('Wetterdaten abrufen'):
             data = fetch_5d_forecast(city1)
@@ -800,8 +812,11 @@ if page == "Städtevergleich":
 
     if page == '16 Tages-Vergleich':
         st.title('Welche beiden Städte möchtest du vergleichen?')
-        city1 = st.text_input('Gib eine Stadt ein:', 'Berlin')
-        city2 = st.text_input('Gib hier deine zweite Stadt ein:', 'Stuttgart')
+        st.markdown("### Gib eine Stadt ein:")
+        city1 = st.text_input("", "Berlin")
+
+        st.markdown("### Gib hier deine zweite Stadt ein:")
+        city2 = st.text_input("", "Stuttgart")
 
         if st.button('Wetterdaten abrufen'):
             data1 = fetch_16d_forecast(city1)
