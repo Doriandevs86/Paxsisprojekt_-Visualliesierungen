@@ -6,7 +6,11 @@ from datetime import datetime
 
 
 # Api_key
-api_key = "3986444df517b61fd9c0b7ec2ea4561c"
+api_key = "Dein Api_Key"
+
+
+
+### Funktinonen ###
 
 
 # Funktion, um aktuelle Wetterdaten abzurufen
@@ -146,6 +150,14 @@ def get_emoji_for_weather(value, category):
         return "🌍"
 
 
+
+
+
+### Streamlitseite ###
+
+
+# Config/Layout der Seite
+st.set_page_config(page_title="Wetteranalyse", page_icon="🌤️")
 st.title("Praxisprojekt Datenvisualisierung")
 
 st.sidebar.title("Navigation")
@@ -160,8 +172,8 @@ page = st.sidebar.radio(" ",
                         "Impressum"]
                         )
 
-# Inhalte der Sidebar
 
+# Inhalte der Sidebar
 if page == "Startseite":
     st.divider()
     st.header("Startseite")
@@ -196,6 +208,7 @@ if page == "Startseite":
     """)
 st.divider()
 
+
 ### Seite Wetterdaten ###
 if page == "Wetterdaten":
 
@@ -217,6 +230,7 @@ if page == "Wetterdaten":
                                 "Benutzerdefinierter Zeitraum")
                                 )
     st.divider()
+
 
     # Aktuelles Wetter anzeigen
     if weather_type == "Aktuelles Wetter" and city:
@@ -297,7 +311,6 @@ if page == "Wetterdaten":
                 ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"]
             )
 
-
             # Temperatur-Diagramm
             if chart_type == "Temperatur in Celsius":
                 fig, ax = plt.subplots()
@@ -327,8 +340,8 @@ if page == "Wetterdaten":
                 ax.set_ylabel("Windgeschwindigkeit (m/s)")
                 plt.xticks(rotation=45)
                 st.pyplot(fig)
-                # st.dataframe(forecast_3h_df)
 
+                # st.dataframe(forecast_3h_df)
 
 
     # Wettervorhersage für die nächsten 5 Tage
@@ -370,8 +383,8 @@ if page == "Wetterdaten":
                 ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"]
             )
 
-
             plt.style.use("dark_background")
+
             # Diagramme
             if chart_type1 == "Temperatur in Celsius":
                 fig, ax = plt.subplots()
@@ -445,6 +458,8 @@ if page == "Wetterdaten":
                 "",
                 ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"]
             )
+
+
             # Temperatur-Diagramm
             if chart_type2 == "Temperatur in Celsius":
                 fig, ax = plt.subplots()
@@ -478,7 +493,7 @@ if page == "Wetterdaten":
                 plt.xticks(rotation=45)
                 st.pyplot(fig)
 
-                    # st.dataframe(forecast_16d_df)
+                # st.dataframe(forecast_16d_df)
 
 
     # Benutzerdefinierter Zeitraum
@@ -495,6 +510,7 @@ if page == "Wetterdaten":
             else:
                 forecast_16d_data = fetch_16d_forecast(city)
                 if forecast_16d_data:
+
                     # Listen zum Speichern der Wetterdaten
                     date_list, temp_list, humidity_list, wind_list, description_list = [], [], [], [], []
 
@@ -592,6 +608,7 @@ if page == "Wetterdaten":
             "",
             ["Temperatur in Celsius", "Luftfeuchtigkeit in %", "Windgeschwindigkeit in m/s"]
         )
+
         # Temperatur-Diagramm
         if chart_type3 == "Temperatur in Celsius":
             fig, ax = plt.subplots()
@@ -656,18 +673,16 @@ if page == "Wettervergleich":
             humidity_list = [forecast_data['list'][i]['humidity'] for i in range(start_idx, end_idx + 1)]
             wind_list = [forecast_data['list'][i]['speed'] for i in range(start_idx, end_idx + 1)]
 
+
             # Auswahl des Diagrammtyps
             st.write(f"### Wetterentwicklung in {city} \n ### von {start_date} bis {end_date}")
-
             st.markdown("<h4>Wählen Sie eine Rubrik:</h4>", unsafe_allow_html=True)
-
             chart_type4 = st.selectbox("",[
                                         "Temperatur in Celsius",
                                         "Luftfeuchtigkeit in %",
                                         "Windgeschwindigkeit in m/s"])
 
-
-            # Matplotlib-Diagramme
+            #Diagramme
             fig, ax = plt.subplots()
             if chart_type4 == "Temperatur in Celsius":
                 ax.plot(dates, temp_list, marker='o', color='tab:red')
@@ -753,6 +768,7 @@ if page == "Städtevergleich":
                     'Windgeschwindigkeit (m/s)': wind_speed,
                     'Luftfeuchtigkeit (%)': humidity
                 })
+
             data = fetch_5d_forecast(city2)
             if data:
                 forecast_list = data['list']
@@ -769,10 +785,9 @@ if page == "Städtevergleich":
                     'Luftfeuchtigkeit (%)': humidity
                 })
 
-            plt.style.use("dark_background")
 
+            plt.style.use("dark_background")
             st.write("Wähle eine Rubrik")
-            # Tabs auf dem Plot
             tab1, tab2, tab3 = st.tabs(['Temperatur',
                                         'Windgeschwindigkeit',
                                         'Luftfeuchtigkeit'])
@@ -809,6 +824,7 @@ if page == "Städtevergleich":
                 plt.ylabel('Luftfeuchtigkeit (%)')
                 ax.legend(labels=[city1, city])
                 st.pyplot(fig)
+
 
     if page == '16 Tages-Vergleich':
         st.title('Welche beiden Städte möchtest du vergleichen?')
@@ -857,6 +873,7 @@ if page == "Städtevergleich":
                 })
 
             # Stadt 2 Daten extrahieren
+
             if data2:
                 forecast_list2 = data2['list']
                 city2_name = data2['city']['name']
@@ -889,13 +906,14 @@ if page == "Städtevergleich":
                     'Windgeschwindigkeit (m/s)': wind_list2,
                     'Beschreibung': description_list2
                 })
-
             st.write("Wähle eine Rubrik")
-            # Visualisierung
-            plt.style.use("dark_background")
 
+
+            plt.style.use("dark_background")
             # Tabs auf dem Plot
-            tab1, tab2, tab3 = st.tabs(['Temperatur', 'Windgeschwindigkeit', 'Luftfeuchtigkeit'])
+            tab1, tab2, tab3 = st.tabs(['Temperatur',
+                                        'Windgeschwindigkeit',
+                                        'Luftfeuchtigkeit'])
 
             with tab1:
                 st.header('Temperatur')

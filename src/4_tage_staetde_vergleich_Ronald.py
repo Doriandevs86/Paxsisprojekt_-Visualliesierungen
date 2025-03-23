@@ -7,7 +7,7 @@ import seaborn as sns
 from matplotlib.pyplot import title
 from statsmodels.tsa.vector_ar.var_model import forecast
 
-API_key = "fe12112fed797c4abdc296ca27fdddaf"
+API_key = "Dein Api-Key"
 
 def get_4days_2city(city):
     url = f'http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={API_key}&units=metric'

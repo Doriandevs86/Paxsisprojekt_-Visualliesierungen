@@ -1,7 +1,6 @@
 import streamlit as st
 
 
-
 def get_emoji_for_weather(value, category):
     # Temperatur Emojis
     if category == "temperature":
