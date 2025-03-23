@@ -633,12 +633,12 @@ if page == "Wettervergleich":
     end_date = st.date_input("Ende", value=pd.to_datetime("today").date())
 
     # Daten nur einmal abrufen und speichern
-#    if st.button("Daten vergleichen"):
-#        forecast_data = fetch_16d_forecast(city)
-#        if forecast_data:
-#            st.session_state['forecast_data'] = forecast_data
-#        else:
-#            st.error("Keine Daten zum Vergleichen verfügbar.")
+    if st.button("Daten vergleichen"):
+        forecast_data = fetch_16d_forecast(city)
+        if forecast_data:
+            st.session_state['forecast_data'] = forecast_data
+        else:
+            st.error("Keine Daten zum Vergleichen verfügbar.")
 
     if 'forecast_data' in st.session_state:
         forecast_data = st.session_state['forecast_data']
