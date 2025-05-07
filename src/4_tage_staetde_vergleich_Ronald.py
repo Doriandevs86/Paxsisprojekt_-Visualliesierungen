@@ -2,12 +2,11 @@ import streamlit as st
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.legend_handler import HandlerLine2D
-import seaborn as sns
-from matplotlib.pyplot import title
-from statsmodels.tsa.vector_ar.var_model import forecast
+import os
+from dotenv import load_dotenv
 
-API_key = "Dein Api-Key"
+load_dotenv()
+api_key = os.getenv("API_KEY")
 
 def get_4days_2city(city):
     url = f'http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={API_key}&units=metric'

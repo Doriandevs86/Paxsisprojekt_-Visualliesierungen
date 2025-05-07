@@ -3,9 +3,11 @@ import requests
 import pandas as pd
 from datetime import datetime
 import matplotlib as plt
+import os
+from dotenv import load_dotenv
 
-# Api_key
-api_key = "Dein API Key"
+load_dotenv()
+api_key = os.getenv("API_KEY")
 
 
 #Funktion für 16 Tage-Vorhersagen

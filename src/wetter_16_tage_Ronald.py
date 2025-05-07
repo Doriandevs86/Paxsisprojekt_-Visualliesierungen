@@ -1,13 +1,11 @@
 import streamlit as st
 import requests
 import pandas as pd
-import matplotlib.pyplot as plt
-from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-
-
-# Api_key
-api_key = "Dein Api Key"
+load_dotenv()
+api_key = os.getenv("API_KEY")
 
 
 
